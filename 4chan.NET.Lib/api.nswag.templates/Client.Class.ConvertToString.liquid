@@ -1,0 +1,44 @@
+{%              if GenerateNullableReferenceTypes -%}
+private string ConvertToString(object? value, System.Globalization.CultureInfo cultureInfo)
+{%              else -%}
+private string ConvertToString(object value, System.Globalization.CultureInfo cultureInfo)
+{%              endif -%}
+{
+    if (value == null)
+    {
+        return "";
+    }
+
+    if (value is System.Enum)
+    {
+        var name = System.Enum.GetName(value.GetType(), value);
+        if (name != null)
+        {
+            try
+            {
+                var attribute = (System.Runtime.Serialization.EnumMemberAttribute)System.Linq.Enumerable.FirstOrDefault(value.GetType().GetMember(name), member => member.DeclaringType == value.GetType()).GetCustomAttributes(typeof(System.Runtime.Serialization.EnumMemberAttribute), false)[0];
+                return attribute.Value;
+            }
+            catch
+            {
+                return name;
+            }
+        }
+    }
+    else if (value is bool) 
+    {
+        return System.Convert.ToString((bool)value, cultureInfo).ToLowerInvariant();
+    }
+    else if (value is byte[])
+    {
+        return System.Convert.ToBase64String((byte[]) value);
+    }
+    else if (value.GetType().IsArray)
+    {
+        var array = System.Linq.Enumerable.OfType<object>((System.Array) value);
+        return string.Join(",", System.Linq.Enumerable.Select(array, o => ConvertToString(o, cultureInfo)));
+    }
+
+    var result = System.Convert.ToString(value, cultureInfo);
+    return result == null ? "" : result;
+}

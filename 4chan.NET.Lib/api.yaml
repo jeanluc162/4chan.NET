@@ -1,0 +1,325 @@
+openapi: 3.0.3
+info:
+  title: 4chan API
+  termsOfService: https://github.com/4chan/4chan-API#api-terms-of-service
+  contact:
+    email: api@4chan.org
+  version: "1.0"
+externalDocs:
+  url: https://github.com/4chan/4chan-API
+servers:
+  - url: http://a.4cdn.org
+paths:
+  /{boardName}/threads.json:
+    get:
+      summary: Retrieves threads from a board
+      parameters:
+        - in: path
+          name: boardName
+          schema:
+            type: string
+            minLength: 1
+          required: true
+          description: The name of the board
+          example: 'biz'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Threadlist'          
+  /{boardName}/thread/{opId}.json:
+    get:
+      summary: Retrieves posts in a thread
+      parameters:
+        - in: path
+          name: boardName
+          schema:
+            type: string
+            minLength: 1
+          required: true
+          description: The name of the board
+          example: 'biz'
+        - in: path
+          name: opId
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+          required: true
+          description: The OPs Id
+          example: 570370
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Thread'          
+components:
+  schemas:
+    Post:
+      type: object
+      properties:
+        no:
+          type: integer
+          format: int32
+          minimum: 1
+          description: The Id of the post
+        resto:
+          type: integer
+          format: int32
+          minimum: 0
+          description: The Id of the OP (0 if this post is the OP)
+        sticky:
+          type: integer
+          format: int32
+          nullable: true
+          enum:
+            - 1
+            - null
+          description: Marks the thread as sticky (OP only)
+        closed:
+          type: integer
+          format: int32
+          nullable: true
+          enum:
+            - 1
+            - null
+          description: Marks the thread as closed (OP only)
+        now:
+          type: string
+        time:
+          type: integer
+          format: int32
+          description: UNIX Timestamp of post creation
+        name:
+          type: string
+          description: Name used for posting
+          example: Anonymous
+        trip:
+          type: string
+          nullable: true
+          description: Tripcode (if any)
+        id:
+          type: string
+          nullable: true
+          description: Posters Id (if any)
+          minLength: 8
+          maxLength: 8
+        capcode:
+          type: string
+          nullable: true
+          description: capcode (if any)
+          enum:
+            - null
+            - 'mod'
+            - 'admin'
+            - 'admin_highlight'
+            - 'manager'
+            - 'developer'
+            - 'founder'
+        country:
+          type: string
+          nullable: true
+          description: ISO 3166-1 alpha-2 country code; XX if unknown
+          minLength: 2
+          maxLength: 2
+        country_name:
+          type: string
+          nullable: true
+          description: Poster's country name
+        board_flag:
+          type: string
+          nullable: true
+          description: Poster's board flag code
+        flag_name:
+          type: string
+          nullable: true
+          description: Poster's board flag name
+        sub:
+          type: string
+          nullable: true
+          description: subject (OP only)
+        com:
+          type: string
+          nullable: true
+          description: HTML-escaped comment (if any)
+        tim:
+          type: integer
+          format: int32
+          nullable: true
+          description: UNIX timestamp + microtime of attachment upload (if any)
+        filename:
+          type: string
+          nullable: true
+          description: Original Filename (if any)
+        ext:
+          type: string
+          nullable: true
+          description: Filetype (if any)
+          example:
+            - '.jpg'
+            - '.png'
+            - '.gif'
+            - '.pdf'
+            - '.swf'
+            - '.webm'
+        fsize:
+          type: integer
+          format: int32
+          nullable: true
+          minimum: 0
+          description: Filesize in Bytes (if any)
+        md5:
+          type: string
+          nullable: true
+          description: BASE64-encoded MD5-hash of the attachment (if any)
+        w:
+          type: integer
+          format: int32
+          nullable: true
+          minimum: 0
+          description: Width of attached image (if any)
+        h:
+          type: integer
+          format: int32
+          nullable: true
+          minimum: 0
+          description: Height of attached image (if any)
+        tn_w:
+          type: integer
+          format: int32
+          nullable: true
+          minimum: 0
+          description: Thumbnail width of attached image (if any)
+        tn_h:
+          type: integer
+          format: int32
+          nullable: true
+          minimum: 0
+          description: Thumbnail height of attached image (if any)
+        filedeleted:
+          type: integer
+          format: int32
+          nullable: true
+          description: Set to 1 if the attached file was deleted
+          enum:
+            - null
+            - 1
+        spoiler:
+          type: integer
+          format: int32
+          nullable: true
+          description: Set to 1 if the attached file (if any) is marked as spoiler
+          enum:
+           - null
+           - 1
+        custom_spoiler:
+          type: integer
+          format: int32
+          nullable: true
+          description: Custom Spoiler Id
+          minimum: 1
+          maximum: 10
+        replies:
+          type: integer
+          format: int32
+          nullable: true
+          description: Total number of replies to a thread (OP only)
+          minimum: 0
+        bumplimit:
+          type: integer
+          format: int32
+          nullable: true
+          description: Set to 1 if the bump limit has been hit (OP only)
+          enum:
+            - null
+            - 1
+        imagelimit:
+          type: integer
+          format: int32
+          nullable: true
+          description: Set to 1 if the image limit has been hit (OP only)
+          enum:
+            - null
+            - 1
+        tag:
+          type: string
+          nullable: true
+          description: .swf-category (OP only)(/f/ only)
+        semantic_url:
+          type: string
+          nullable: true
+          description: SEO URL slug for thread (OP only)
+        since4pass:
+          type: integer
+          format: int32
+          nullable: true
+          description: year 4chan pass bought (if any)
+          minimum: 1000
+          maximum: 9999
+        unique_ips:
+          type: integer
+          format: int32
+          nullable: true
+          description: Number of unique posters in a thread (OP only)(unarchived threads only)
+          minimum: 1
+        m_img:
+          type: integer
+          format: int32
+          nullable: true
+          description: Set to 1 if a mobile optimized image exists for the post
+          enum:
+            - null
+            - 1
+        archived:
+          type: integer
+          format: int32
+          nullable: true
+          description: Set to 1 if the thread has been archived (OP only)
+          enum:
+            - null
+            - 1
+        archived_on:
+          type: integer
+          format: int32
+          nullable: true
+          description: UNIX timestamp from when the post was archived (if any)(OP only)
+    Thread:
+      type: object
+      properties:
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Post'
+    Threadlist:
+      type: array
+      items:
+        type: object
+        properties:
+          page:
+            type: integer
+            minimum: 1
+          thread:
+            type: array
+            items:
+              type: object
+              properties:
+                no:
+                  type: integer
+                  format: int32
+                  minimum: 1
+                  description: The Id of the OP
+                last_modified:
+                  type: integer
+                  format: int32
+                  description: UNIX timestamp of the last time the thread was modified
+                replies:
+                  type: integer
+                  format: int32
+                  minimum: 1
+                  description: amount of replies in the thread
