@@ -8,8 +8,77 @@ info:
 externalDocs:
   url: https://github.com/4chan/4chan-API
 servers:
-  - url: http://a.4cdn.org
+  - url: http://{contenttype}.4cdn.org
+    variables:
+      contenttype:
+        default: a
+        enum:
+          - a # Normal Content
+          - i # Images/Thumbnails
+          - s # Static Images
 paths:
+  /{boardName}/{imageId}.{fileExtension}:
+    get:
+      summary: Retrieves an image. Use "i"-Subdomain
+      parameters:
+        - in: path
+          name: boardName
+          schema:
+            type: string
+            minLength: 1
+          required: true
+          description: The name of the board
+          example: 'biz'
+        - in: path
+          name: imageId
+          schema:
+            type: integer
+            format: int32
+          required: true
+          description: The image Id. Equal to "tim"
+        - in: path
+          name: fileExtension
+          schema:
+            type: string
+            minLength: 1
+          required: true
+          description: File Extension of the image
+          example: 'jpg'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            image/*:
+             schema: 
+               type: string
+               format: binary
+  /{boardName}/{imageId}s.jpg:
+    get:
+      summary: Retrieves a thumbnail. Use "i"-Subdomain
+      parameters:
+        - in: path
+          name: boardName
+          schema:
+            type: string
+            minLength: 1
+          required: true
+          description: The name of the board
+          example: 'biz'
+        - in: path
+          name: imageId
+          schema:
+            type: integer
+            format: int32
+          required: true
+          description: The image Id. Equal to "tim"
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            image/jpg:
+             schema: 
+               type: string
+               format: binary
   /{boardName}/threads.json:
     get:
       summary: Retrieves threads from a board
@@ -58,7 +127,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Thread'          
+                  $ref: '#/components/schemas/Thread'
 components:
   schemas:
     Post:
