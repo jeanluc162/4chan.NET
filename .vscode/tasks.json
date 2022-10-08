@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/4chan.NET.Lib/4chan.NET.Lib.csproj",
+                "${workspaceFolder}/4chan.NET.Samples.Console/4chan.NET.Samples.Console.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/4chan.NET.Lib/4chan.NET.Lib.csproj",
+                "${workspaceFolder}/4chan.NET.Samples.Console/4chan.NET.Samples.Console.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -33,7 +33,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/4chan.NET.Lib/4chan.NET.Lib.csproj"
+                "${workspaceFolder}/4chan.NET.Samples.Console/4chan.NET.Samples.Console.csproj"
             ],
             "problemMatcher": "$msCompile"
         }
